@@ -24,8 +24,7 @@ class ViewController: UIViewController {
     }
     
     
-    var infix:String = ""
-    var postfix = [String]()
+    var inputString:String = ""
     
     @IBAction func didClicked(sender: UIButton) {
         let value = sender.currentTitle
@@ -35,38 +34,52 @@ class ViewController: UIViewController {
         }
 //        print(value)
         if value == "=" {
-            var result = calculate()
-            if result == ""{
+            //init a calculator class
+            let result = calculator(expression: "\(inputString)")
+            //call calculate method in calculator
+            if result.calculate() == ""{
                 resultLabel.text = "This's not a good Math expression\n"
             }
             else{
-                bigResult.text = "\(result)"
-                infix = "\(result)"
+                bigResult.text = "\(result.calculate())"
+                inputString = "\(result.calculate())"
             }
             return
         }
         else if value == "c"{
-            infix.removeAll()
+            inputString.removeAll()
         }
         else if value == "del"{
-            if countElements(infix) > 0{
-                infix = dropLast(infix)
-                print(infix)
+            if countElements(inputString) > 0{
+                inputString = dropLast(inputString)
+                print(inputString)
             }
         }
         else{
-            infix += value!
+            inputString += value!
         }
         //update the information on blackboard
-        if countElements(infix) > 0 {
-            resultLabel.text = "\(infix)"
+        if countElements(inputString) > 0 {
+            resultLabel.text = "\(inputString)"
         }
         else{
             resultLabel.text = "0"
         }
     }
-
-  /**
+}
+/**
+ * calculator class package the whole method of calculation
+ *
+ */
+class calculator {
+    var infix:String = ""
+    var postfix = [String]()
+    
+    //constuctor
+    init(expression:String){
+        self.infix = expression
+    }
+    /**
     * To judge the priority of a operator
     *
     * @retrun : the priority of operator
@@ -83,7 +96,7 @@ class ViewController: UIViewController {
         }
     }
     
-  /**
+    /**
     * Calculate the math expresion according to Postfix Expression
     *
     * @retrun : a string of result
@@ -103,16 +116,16 @@ class ViewController: UIViewController {
                     var param1 = NSString(string: stack.last!).doubleValue
                     stack.removeLast()
                     switch eachParam{
-                        case "+":
-                            result = param1 + param2
-                        case "-":
-                            result = param1 - param2
-                        case "*":
-                            result = param1 * param2
-                        case "/":
-                            result = param1 / param2
-                        default:
-                            result = 0
+                    case "+":
+                        result = param1 + param2
+                    case "-":
+                        result = param1 - param2
+                    case "*":
+                        result = param1 * param2
+                    case "/":
+                        result = param1 / param2
+                    default:
+                        result = 0
                     }
                     stack.append("\(result)")
                 }
@@ -131,10 +144,10 @@ class ViewController: UIViewController {
     }
     
     /**
-     * Transform the math expresstion from Nifix Expression to Postfix Expression
-     *
-     * @retrun : a bool, True means math expression is correct, otherwise False
-     */
+    * Transform the math expresstion from Nifix Expression to Postfix Expression
+    *
+    * @retrun : a bool, True means math expression is correct, otherwise False
+    */
     func inToPost() -> Bool{
         var param:String = ""
         //used to store the operators
@@ -184,7 +197,8 @@ class ViewController: UIViewController {
         }
         return true
     }
-       
+    
 }
+
 
 
