@@ -42,5 +42,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+    //prevent screen rotate
+    func application(application: UIApplication, supportedInterfaceOrientationsForWindow window: UIWindow) -> Int {
+        return Int(UIInterfaceOrientationMask.Portrait.rawValue)
+    }
 }
 

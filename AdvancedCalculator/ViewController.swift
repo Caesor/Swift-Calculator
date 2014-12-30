@@ -13,9 +13,18 @@ class ViewController: UIViewController {
     @IBOutlet weak var resultLabel: UILabel!
     @IBOutlet weak var bigResult: UILabel!
     
+    var inputString2:String = ""
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        if inputString2 != ""{
+            inputString = inputString2
+            resultLabel.text = inputString2
+        }
+        
+        //alwayse show the last character of math expression
+        resultLabel.lineBreakMode = NSLineBreakMode.ByTruncatingHead
     }
     
     override func didReceiveMemoryWarning() {
@@ -23,16 +32,26 @@ class ViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        if segue.identifier == "GoToAdvan" {
+            let inputString1:String = resultLabel.text!
+            
+            var vc = segue.destinationViewController as AdvancedCalculator
+            vc.inputString1 = inputString1
+        }
+    }
+    
+    
     
     var inputString:String = ""
     
     @IBAction func didClicked(sender: UIButton) {
         let value = sender.currentTitle
         
+        //println(value)
         if bigResult.text != ""{
             bigResult.text = ""
         }
-//        print(value)
         if value == "=" {
             //init a calculator class
             let result = calculator(expression: "\(inputString)")
@@ -54,6 +73,19 @@ class ViewController: UIViewController {
                 inputString = dropLast(inputString)
                 print(inputString)
             }
+        }
+        else if value == "( )"{
+            //find the last character in string
+            var lastOp:String.Index = advance(inputString.startIndex, countElements(inputString) - 1)
+            var lastChar = inputString.substringFromIndex(lastOp)
+            
+            if lastChar == "+" || lastChar == "-" || lastChar == "*" || lastChar == "/" {
+                inputString += "("
+            }
+            else {
+                inputString += ")"
+            }
+            //println(inputString)
         }
         else{
             inputString += value!
@@ -79,7 +111,7 @@ class calculator {
     init(expression:String){
         self.infix = expression
     }
-    /**
+   /**
     * To judge the priority of a operator
     *
     * @retrun : the priority of operator
@@ -91,12 +123,15 @@ class calculator {
         else if op == "*" || op == "/"{
             return 2
         }
-        else{
+        else if op == "(" || op == ")"{
             return 3
+        }
+        else{
+            return 4
         }
     }
     
-    /**
+   /**
     * Calculate the math expresion according to Postfix Expression
     *
     * @retrun : a string of result
@@ -143,7 +178,7 @@ class calculator {
         return solution
     }
     
-    /**
+   /**
     * Transform the math expresstion from Nifix Expression to Postfix Expression
     *
     * @retrun : a bool, True means math expression is correct, otherwise False
